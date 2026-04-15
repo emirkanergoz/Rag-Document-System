@@ -1,267 +1,156 @@
-# Hybrid RAG Doküman Sorgulama Sistemi
+# 🧠 Hybrid RAG Doküman Sorgulama Sistemi
 
 ## 📌 Proje Hakkında
 
 Bu proje, farklı veri formatlarını (TXT, CSV, JSON) bir araya getirerek **doğru, güncel ve bağlama uygun cevaplar üreten bir RAG (Retrieval-Augmented Generation) sistemi** geliştirmeyi amaçlamaktadır.
 
 Sistem:
-
-* Metin tabanlı dokümanlardan (TXT) bilgi çekebilir
-* Tablo verilerini (CSV) yapısını bozmadan okuyabilir
-* Güncellemeleri (JSON) dikkate alarak en güncel bilgiyi sunar
+- Metin tabanlı dokümanlardan (TXT) bilgi çekebilir  
+- Tablo verilerini (CSV) yapısını bozmadan okuyabilir  
+- Güncellemeleri (JSON) dikkate alarak en güncel bilgiyi sunar  
 
 ---
 
 ## 🎯 Özellikler
 
-* 🔍 **Hibrit Veri Kullanımı**
+### 🔍 Hibrit Veri Kullanımı
+- `sozlesme.txt` → sözleşme ve kurallar (RAG ile aranır)
+- `paket_fiyatlari.csv` → paket fiyatları (doğrudan sorgulanır)
+- `guncellemeler.json` → güncellemeler (override edilir)
 
-  * `sozlesme.txt` → sözleşme ve kurallar (RAG ile aranır)
-  * `paket_fiyatlari.csv` → paket fiyatları (doğrudan sorgulanır)
-  * `guncellemeler.json` → güncellemeler (override edilir)
+### 🧠 Akıllı Soru Anlama (Intent Detection)
+- Fiyat
+- İade
+- İptal  
+Sadece ilgili bilgiyi döner, gereksiz bilgi vermez
 
-* 🧠 **Akıllı Soru Anlama (Intent Detection)**
+### 🔄 Dinamik Veri Yapısı
+- CSV veya JSON değişirse sistem otomatik günceller
+- Statik cevap üretmez
 
-  * Kullanıcının ne sorduğunu analiz eder:
+### 📊 Tablo Verisi Yönetimi
+- CSV verisi RAG’e dahil edilmez
+- Satır/sütun yapısı korunur
 
-    * Fiyat
-    * İade
-    * İptal
-  * Sadece ilgili bilgiyi döner (gereksiz bilgi vermez)
+### 🕒 Güncel Bilgi Önceliği
+- JSON verisi TXT’ye göre daha önceliklidir
 
-* 🔄 **Dinamik Veri Yapısı**
-
-  * CSV veya JSON dosyasında değişiklik yapılırsa sistem otomatik olarak güncel veriyi kullanır
-  * Statik cevap üretmez
-
-* 📊 **Tablo Verisi Yönetimi**
-
-  * CSV verisi RAG’e dahil edilmez
-  * Satır/sütun yapısı korunarak doğrudan filtrelenir
-
-* 🕒 **Güncel Bilgi Önceliği**
-
-  * JSON dosyasındaki en güncel kayıtlar, TXT verisinin önüne geçer
-
-* 📎 **Metadata (Kaynak Gösterimi)**
-
-  * Sistem, cevabı üretirken hangi dosyaları kullandığını belirtir
+### 📎 Metadata (Kaynak Gösterimi)
+Sistem cevabı üretirken hangi dosyaları kullandığını takip eder
 
 ---
 
 ## 📂 Veri Seti Yapısı
 
-```bash
 data/
 ├── sozlesme.txt
 ├── paket_fiyatlari.csv
 └── guncellemeler.json
-```
 
-### Açıklamalar
+---
 
-* **sozlesme.txt**
-  Sözleşme maddelerini içerir.
-  Örnek:
-  `Madde 4.1: İade süresi 14 gündür.`
+## 📝 Örnek Veriler
 
-* **paket_fiyatlari.csv**
-  Paket bilgilerini içerir.
-  Örnek:
+### sozlesme.txt
+Madde 4.1: İade süresi 14 gündür.
 
-```csv
+### paket_fiyatlari.csv
 paket,fiyat
 Basic,100
 Pro,200
 Enterprise,500
-```
 
-* **guncellemeler.json**
-  Zamanla yapılan değişiklikleri içerir.
-  Örnek:
-
-```json
+### guncellemeler.json
 [
   {
     "tarih": "2024-06-01",
     "degisiklik": "Pro paket iade süresi 30 güne çıkarılmıştır."
   }
 ]
-```
 
 ---
 
-## ⚙️ Kurulum ve Çalıştırma
+## ⚙️ Kurulum
 
 ### 1. Projeyi klonla
-
-```bash
-git clone https://github.com/kullaniciadi/hybrid-rag-document-system.git
-cd hybrid-rag-document-system
-```
-
----
+git clone https://github.com/kullaniciadi/hybrid-rag-document-system.git  
+cd hybrid-rag-document-system  
 
 ### 2. Virtual environment oluştur
+python -m venv venv  
 
-```bash
-python -m venv venv
-```
+### 3. Aktifleştir
 
-Aktifleştir:
+Windows:
+venv\Scripts\activate  
 
-**Windows**
+Mac/Linux:
+source venv/bin/activate  
 
-```bash
-venv\Scripts\activate
-```
+### 4. Bağımlılıkları yükle
+pip install -r requirements.txt  
 
-**Mac/Linux**
+### 5. Çalıştır (CLI)
+python main.py  
 
-```bash
-source venv/bin/activate
-```
+### 6. API (opsiyonel)
+uvicorn main_api:app --reload  
 
----
-
-### 3. Bağımlılıkları yükle
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-### 4. Uygulamayı çalıştır (CLI)
-
-```bash
-python main.py
-```
-
----
-
-### 5. API olarak çalıştır (opsiyonel)
-
-```bash
-uvicorn main_api:app --reload
-```
-
-Tarayıcı:
-
-```
-http://127.0.0.1:8000/docs
-```
+Swagger:
+http://127.0.0.1:8000/docs  
 
 ---
 
 ## 🔍 Örnek Sorgular
 
-```text
-Pro paket fiyatı nedir?
-```
-
-```text
-Basic paket iade süresi nedir?
-```
-
-```text
-Pro paket fiyatı ve iptal şartları nedir?
-```
+Pro paket fiyatı nedir?  
+Basic paket iade süresi nedir?  
+Pro paket fiyatı ve iptal şartları nedir?  
 
 ---
 
 ## 🧠 Sistem Mimarisi
 
-### 1. RAG (TXT Verisi)
+### 1. RAG (TXT)
+- Chunking yapılır
+- Embedding oluşturulur
+- FAISS ile benzerlik aranır
 
-* `sozlesme.txt` parçalanır (chunking)
-* Sentence Transformers ile embedding oluşturulur
-* FAISS ile benzerlik araması yapılır
+### 2. CSV (Tabular Data)
+- Vektörize edilmez
+- Direkt filtrelenir
+- Veri bütünlüğü korunur
 
----
+### 3. JSON (Override)
+- En güncel veri önceliklidir
+- TXT’yi override eder
 
-### 2. CSV Yönetimi (Tabular Data)
-
-* CSV verisi **vektörize edilmez**
-* Doğrudan filtreleme yapılır
-
-📌 **Sebep:**
-Chunking işlemi tablo yapısını bozacağı için veri bütünlüğü korunmuştur.
-
----
-
-### 3. JSON Güncelleme Mekanizması
-
-* JSON verisi kontrol edilir
-* Eğer ilgili paket için güncel kayıt varsa:
-  → TXT verisinin yerine kullanılır
-
-📌 **Öncelik sırası:**
-
-```
+### Öncelik sırası:
 JSON > TXT
-```
 
 ---
 
-### 4. Intent Detection
+## 🧪 Test Senaryoları
 
-Kullanıcının sorusu analiz edilir:
-
-* "fiyat" → CSV
-* "iade" → JSON / TXT
-* "iptal" → TXT
+- CSV fiyat değiştir → sistem anında günceller  
+- JSON update ekle → en güncel veri kullanılır  
+- TXT değiştir → RAG sonucu değişir  
 
 ---
 
-### 5. Hibrit Cevap Üretimi
+## 📌 Tasarım Kararları
 
-Sistem:
-
-* Gerekli kaynakları seçer
-* Verileri birleştirir
-* Tek ve anlamlı bir cevap üretir
-
----
-
-## 🧪 Test ve Değerlendirme
-
-Sistem, statik değil dinamik çalışacak şekilde tasarlanmıştır.
-
-### Test Senaryoları:
-
-* CSV dosyasındaki fiyatı değiştirin
-  → Cevap değişmelidir
-
-* JSON dosyasına yeni kayıt ekleyin
-  → Sistem en güncel veriyi kullanmalıdır
-
-Örnek:
-
-```json
-{
-  "tarih": "2025-01-01",
-  "degisiklik": "Basic paket iade süresi 7 güne düşürülmüştür."
-}
-```
-
----
-
-## 📌 Önemli Tasarım Kararları
-
-* CSV verisi RAG’e dahil edilmemiştir
-* JSON verisi override mekanizması olarak kullanılmıştır
-* Intent detection ile gereksiz bilgi verilmesi engellenmiştir
-* Sistem tamamen dinamik çalışacak şekilde geliştirilmiştir
+- CSV RAG’e dahil edilmedi (tablo bozulmaması için)
+- JSON override mekanizması olarak kullanıldı
+- Intent detection ile gereksiz bilgi engellendi
+- Sistem tamamen dinamik çalışır
 
 ---
 
 ## ✅ Sonuç
 
 Bu sistem:
-
-* Farklı veri kaynaklarını entegre eder
-* Güncel bilgiyi önceliklendirir
-* Kullanıcıya doğru ve bağlama uygun cevap verir
-
----
+- Farklı veri kaynaklarını entegre eder
+- Güncel bilgiyi önceliklendirir
+- Kullanıcıya bağlama uygun doğru cevap verir
+- Gerçek RAG mimarisini simüle eder
